@@ -1,0 +1,155 @@
+openapi: 3.0.3
+info:
+  title: Biblioteca API
+  description: API para gestionar libros en una biblioteca
+  version: 1.0.0
+  contact:
+    name: Equipo de Desarrollo
+    email: ivettlizzgarciarodriguez@gmail.com
+servers:
+  - url: http://localhost:5000
+    description: Servidor local para pruebas
+  - url: https://api.biblioteca.com
+    description: Servidor de producción
+tags:
+  - name: Operations
+    description: Endpoints para manejar libros
+paths:
+  /books:
+    get:
+      tags:
+        - Operations
+      summary: Obtener todos los libros
+      description: Devuelve una lista de todos los libros en la biblioteca
+      responses:
+        '200':
+          description: Lista de libros
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Book'
+              examples:
+                ejemplo1:
+                  value:
+                    - id: 1
+                      title: "Don Quijote de la Mancha"
+                      author: "Miguel de Cervantes"
+                      publicationYear: 1605
+                    - id: 2
+                      title: "Cien años de soledad"
+                      author: "Gabriel García Márquez"
+                      publicationYear: 1967
+    post:
+      tags:
+        - Operations
+      summary: Agregar un nuevo libro
+      description: Inserta un nuevo libro en la biblioteca
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Book'
+            examples:
+              nuevoLibro:
+                $ref: './examples.json#/postBookExample'
+      responses:
+        '201':
+          description: Libro creado exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+  /books/{id}:
+    get:
+      tags:
+        - Operations
+      summary: Obtener un libro por ID
+      description: Devuelve los detalles de un libro dado su ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID único del libro
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Detalles del libro
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+              examples:
+                libro1:
+                  $ref: './examples.json#/getBookByIdExample'
+        '404':
+          description: Libro no encontrado
+    put:
+      tags:
+        - Operations
+      summary: Actualizar un libro por ID
+      description: Actualiza los detalles de un libro dado su ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID único del libro
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Book'
+      responses:
+        '200':
+          description: Libro actualizado exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+        '404':
+          description: Libro no encontrado
+    delete:
+      tags:
+        - Operations
+      summary: Eliminar un libro por ID
+      description: Elimina un libro dado su ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID único del libro
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Libro eliminado exitosamente
+        '404':
+          description: Libro no encontrado
+components:
+  schemas:
+    Book:
+      type: object
+      required:
+        - id
+        - title
+        - author
+        - publicationYear
+      properties:
+        id:
+          type: integer
+          description: Código único del libro
+        title:
+          type: string
+          description: Título del libro
+        author:
+          type: string
+          description: Autor del libro
+        publicationYear:
+          type: integer
+          description: Año de publicación
